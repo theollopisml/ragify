@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app          # Le code est monté en volume : tout changement local est reflété sans rebuilder
+    env_file:
+      - .env
+    depends_on:
+      - qdrant
+
+  qdrant:
+    image: qdrant/qdrant:v1.13.2
+    ports:
+      - "6333:6333"             # API REST (dashboard web sur http://localhost:6333/dashboard)
+      - "6334:6334"             # gRPC (utilisé par le client Python, plus rapide que REST)
+    volumes:
+      - qdrant_data:/qdrant/storage   # Données persistées entre les redémarrages
+
+volumes:
+  qdrant_data:
