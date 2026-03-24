@@ -1,25 +1,25 @@
-# CLAUDE.md — Directives de collaboration
+# CLAUDE.md — Collaboration Guidelines
 
-## Approche de travail
+## Workflow
 
-- **Bloc par bloc** : on avance un bloc fonctionnel à la fois (ex: indexation, RAG, frontend). Jamais de gros batch.
-- **Pas d'anticipation** : ne pas créer de fichiers ou dossiers "au cas où". On crée uniquement ce que le bloc en cours nécessite.
-- **Validation avant progression** : toujours attendre la validation de l'utilisateur avant de passer au bloc suivant.
+- **Bloc by bloc**: one functional bloc at a time (e.g. indexing, RAG, frontend). Never large batches.
+- **No anticipation**: don't create files or folders "just in case". Only create what the current bloc requires.
+- **Validate before moving on**: always wait for user validation before proceeding to the next bloc.
 
-## Quand tu planifies
+## When planning
 
-- Segmenter clairement les étapes du bloc à venir.
-- Justifier chaque choix technique : pourquoi cet outil, cette lib, cette approche plutôt qu'une autre.
-- Donner la vision d'ensemble : où ce bloc s'inscrit dans le projet global.
+- Clearly segment the steps of the upcoming bloc.
+- Justify every technical choice: why this tool, this lib, this approach over another.
+- Give the big picture: where this bloc fits in the overall project.
 
-## Quand tu exécutes
+## When executing
 
-- Expliquer ce que fait chaque partie significative du code.
-- Adopter un ton pédagogique : l'utilisateur veut comprendre, pas juste avoir du code qui marche.
-- Commenter les décisions non évidentes directement dans le code si pertinent.
+- Explain what each significant part of the code does.
+- Be pedagogical: the user wants to understand, not just get working code.
+- Comment non-obvious decisions directly in the code when relevant.
 
-## Projet
+## Project
 
-- **Ragify** : assistant IA conversationnel (RAG) pour une boutique Shopify de jardinières.
-- Stack : FastAPI + Qdrant + Claude API + Preact/vanilla JS
-- Cahier des charges complet dans `doc/cahier-des-charges-rag-shopify.md`
+- **Ragify**: conversational AI assistant (RAG) for a Shopify plant container store.
+- Stack: FastAPI + Qdrant + Claude API + Preact/vanilla JS
+- Full spec in `doc/cahier-des-charges-rag-shopify.md`
