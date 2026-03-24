@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     shopify_app_secret: str = ""
     qdrant_host: str = "localhost"
     qdrant_port: int = 6333
-
+    shopify_app_redirect_uri: str = "http://localhost:8000"
     model_config = {"env_file": ENV_FILE}
 
 
