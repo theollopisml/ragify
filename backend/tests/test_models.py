@@ -15,9 +15,7 @@ class TestFlattenNodes:
     def test_flattens_nested(self):
         data = {
             "variants": {
-                "nodes": [
-                    {"id": "1", "options": {"nodes": [{"name": "Size"}]}}
-                ]
+                "nodes": [{"id": "1", "options": {"nodes": [{"name": "Size"}]}}]
             }
         }
         result = _flatten_nodes(data)
@@ -109,7 +107,7 @@ class TestArticleModel:
         assert article.id == "gid://shopify/Article/123456789"
         assert article.title == "How to Care for Your Plants"
         assert article.blog.handle == "plant-tips"
-        assert article.author.name == "Test Author"
+        assert article.author is not None and article.author.name == "Test Author"
         assert article.tags == ["plants", "guide"]
 
     def test_handles_null_summary(self, raw_article):
