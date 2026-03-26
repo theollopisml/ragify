@@ -89,11 +89,11 @@ class Article(BaseModel):
     body: str
     summary: str | None
     tags: list[str]
-    author: Author
+    author: Author | None
     blog: Blog
     publishedAt: str | None
     createdAt: str
-    updatedAt: str
+    updatedAt: str | None
 
 
 class Page(BaseModel):
@@ -101,7 +101,7 @@ class Page(BaseModel):
     title: str
     handle: str
     body: str
-    bodySummary: str | None
+    bodySummary: str
     createdAt: str
     updatedAt: str
 

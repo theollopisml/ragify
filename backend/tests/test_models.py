@@ -124,6 +124,18 @@ class TestArticleModel:
 
         assert article.publishedAt is None
 
+    def test_handles_null_author(self, raw_article):
+        raw_article["author"] = None
+        article = Article(**raw_article)
+
+        assert article.author is None
+
+    def test_handles_null_updated_at(self, raw_article):
+        raw_article["updatedAt"] = None
+        article = Article(**raw_article)
+
+        assert article.updatedAt is None
+
 
 class TestPageModel:
     """Test Page model parsing."""
@@ -135,8 +147,7 @@ class TestPageModel:
         assert page.title == "Contact"
         assert page.handle == "contact"
 
-    def test_handles_null_body_summary(self, raw_page):
-        raw_page["bodySummary"] = None
+    def test_body_summary_is_required(self, raw_page):
         page = Page(**raw_page)
 
-        assert page.bodySummary is None
+        assert page.bodySummary == "Contact Us Send us a message!"
