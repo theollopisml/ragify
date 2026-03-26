@@ -13,12 +13,15 @@ import logging
 import httpx
 
 from app.config import settings
+from app.services.models import Article, Page, Product
 from app.services.shopify_auth import shopify_auth
 
 logger = logging.getLogger(__name__)
 
 API_VERSION = "2026-04"
-GRAPHQL_URL = f"https://{settings.shopify_store_url}/admin/api/{API_VERSION}/graphql.json"
+GRAPHQL_URL = (
+    f"https://{settings.shopify_store_url}/admin/api/{API_VERSION}/graphql.json"
+)
 
 # ---------------------------------------------------------------------------
 # GraphQL Queries
@@ -40,6 +43,10 @@ query GetProducts($first: Int!, $after: String) {
             productType
             vendor
             tags
+            seo {
+                title
+                description
+            }
             status
             createdAt
             updatedAt
@@ -47,6 +54,7 @@ query GetProducts($first: Int!, $after: String) {
                 minVariantPrice { amount currencyCode }
                 maxVariantPrice { amount currencyCode }
             }
+            #WARNING: Limited to 50 variants — if a product has more, they will be truncated
             variants(first: 50) {
                 nodes {
                     id
@@ -57,6 +65,7 @@ query GetProducts($first: Int!, $after: String) {
                     selectedOptions { name value }
                 }
             }
+            #WARNING: Limited to 20 metafields — if a product has more, they will be truncated
             metafields(first: 20) {
                 nodes {
                     namespace
@@ -98,6 +107,7 @@ query GetArticles($first: Int!, $after: String) {
             }
             blog {
                 title
+                handle
             }
             publishedAt
             createdAt
@@ -138,6 +148,7 @@ query GetPages($first: Int!, $after: String) {
 # ---------------------------------------------------------------------------
 # Fetch functions
 # ---------------------------------------------------------------------------
+
 
 async def _graphql_request(query: str, variables: dict) -> dict:
     """Send a GraphQL request to Shopify Admin API."""
@@ -187,16 +198,32 @@ async def _fetch_all(query: str, resource_key: str, batch_size: int = 50) -> lis
     return all_items
 
 
-async def fetch_all_products() -> list[dict]:
+def _flatten_nodes(item: dict) -> dict:
+    """Flatten nested {nodes: [...]} wrappers from GraphQL responses into plain lists."""
+    flattened = {}
+    for key, value in item.items():
+        if isinstance(value, dict) and "nodes" in value and len(value) == 1:
+            flattened[key] = [_flatten_nodes(node) for node in value["nodes"]]
+        elif isinstance(value, dict):
+            flattened[key] = _flatten_nodes(value)
+        else:
+            flattened[key] = value
+    return flattened
+
+
+async def fetch_all_products() -> list[Product]:
     """Fetch all products from the Shopify store."""
-    return await _fetch_all(PRODUCTS_QUERY, "products")
+    raw = await _fetch_all(PRODUCTS_QUERY, "products")
+    return [Product(**_flatten_nodes(item)) for item in raw]
 
 
-async def fetch_all_articles() -> list[dict]:
+async def fetch_all_articles() -> list[Article]:
     """Fetch all blog articles from the Shopify store."""
-    return await _fetch_all(ARTICLES_QUERY, "articles")
+    raw = await _fetch_all(ARTICLES_QUERY, "articles")
+    return [Article(**item) for item in raw]
 
 
-async def fetch_all_pages() -> list[dict]:
+async def fetch_all_pages() -> list[Page]:
     """Fetch all pages (FAQ, static content) from the Shopify store."""
-    return await _fetch_all(PAGES_QUERY, "pages")
+    raw = await _fetch_all(PAGES_QUERY, "pages")
+    return [Page(**item) for item in raw]
