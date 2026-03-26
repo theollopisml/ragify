@@ -13,7 +13,10 @@ class Settings(BaseSettings):
     shopify_app_secret: str = ""
     qdrant_host: str = "localhost"
     qdrant_port: int = 6333
-
+    # Chunking — comma-separated list of page handles to index (e.g. "faq,about")
+    pages_handles_to_index: str = "faq"
+    chunk_size: int = 500
+    chunk_overlap: int = 50
     model_config = {"env_file": ENV_FILE}
 
 
