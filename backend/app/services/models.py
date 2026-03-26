@@ -2,12 +2,14 @@
 Pydantic models for Shopify GraphQL API responses and chunking output.
 """
 
-from pydantic import BaseModel
+from enum import Enum
 
+from pydantic import BaseModel
 
 # ---------------------------------------------------------------------------
 # Shared models
 # ---------------------------------------------------------------------------
+
 
 class SEO(BaseModel):
     title: str | None
@@ -17,6 +19,7 @@ class SEO(BaseModel):
 # ---------------------------------------------------------------------------
 # Shopify API response models
 # ---------------------------------------------------------------------------
+
 
 class VariantOption(BaseModel):
     name: str
@@ -107,10 +110,34 @@ class Page(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# Chunking output model
+# Chunking output models
 # ---------------------------------------------------------------------------
+
+
+class SourceType(str, Enum):
+    PRODUCT = "product"
+    ARTICLE = "article"
+    PAGE = "page"
+
+
+class ChunkPayload(BaseModel):
+    """Metadata stored alongside the vector in Qdrant."""
+
+    source_type: SourceType
+    shopify_gid: str
+    handle: str
+    content_hash: str
+    shopify_updated_at: str | None
+    indexed_at: str
+    # Product-specific
+    image_url: str | None = None
+    image_alt: str | None = None
+    # Article-specific
+    chunk_index: int | None = None
+
 
 class Chunk(BaseModel):
     """A single chunk ready for embedding and Qdrant storage."""
+
     text: str
-    payload: dict
+    payload: ChunkPayload
