@@ -15,8 +15,15 @@ class Settings(BaseSettings):
     qdrant_port: int = 6333
     # Chunking — comma-separated list of page handles to index (e.g. "faq,about")
     pages_handles_to_index: str = "faq"
+    # WARNING: chunk_size is in characters (~4 chars ≈ 1 token).
+    # text-embedding-3-small has a max of 8191 tokens per input.
+    # Keep chunk_size well under ~30000 chars to stay safe with headers included.
     chunk_size: int = 500
     chunk_overlap: int = 50
+    # Embeddings
+    openai_api_key: str = ""
+    embedding_model: str = "text-embedding-3-small"
+    embedding_dimensions: int = 1536
     model_config = {"env_file": ENV_FILE}
 
 
